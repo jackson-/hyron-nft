@@ -1,24 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract HyronNFT is ERC721, Ownable {
-    // mapping to keep track of which token has been minted to which address
-    mapping(uint => mapping(address => bool)) private mintedTokens;
+contract MyERC1155Token is ERC1155, Ownable {
+    // mapping to keep track of which token ID has been minted to which address
+    mapping(uint256 => mapping(address => bool)) private _mintedTokens;
 
-    constructor(string memory name, string memory symbol) ERC721(name, symbol) {}
+    constructor(string memory uri) ERC1155(uri) {}
 
     // function to mint a new token
-    function mint(uint256 tokenId) public {
-        // make sure the token has not been minted before
-        require(mintedTokens[tokenId][msg.sender] == false, "Token already minted");
+    function mint(uint256 id, uint256 amount, bytes memory data) public {
+        // make sure the token ID has not been minted before to the account
+        require(_mintedTokens[id][msg.sender] == false, "Token already minted");
 
-        // mint the token to the sender's address
-        _safeMint(msg.sender, tokenId);
+        // mint the token to the account
+        _mint(account, id, amount, data);
 
-        // record that the token has been minted to the sender's address
-        mintedTokens[tokenId][msg.sender] = true;
+        // record that the token ID has been minted to the account
+        _mintedTokens[id][msg.sender] = true;
     }
 }
